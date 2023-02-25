@@ -33,6 +33,9 @@ public class Cube {
 				}
 			} else {
 				command = reader.readLine();
+				if (command.contains("q") == true) {
+					break;
+				}
 			}
 
 

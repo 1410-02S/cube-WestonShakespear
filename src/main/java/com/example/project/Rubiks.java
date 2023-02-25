@@ -9,31 +9,73 @@ public class Rubiks {
 
     private String[][] cube = new String[26][26];
 
-    // private int[][] posMap = {
-    //     3,  5,  7
-    //     17, 25, 18
-    //     1,  11, 5
+    private int[][][] posMap = {
+        { {5,  11, 1 },
+          {18, 25, 17},
+          {7,  15, 3 } },
                 
-    //     7,  13, 6
-    //     18, 21, 19
-    //     5,  9,  4
+        { {4, 9, 5 },
+          {19, 21, 18},
+          {6,  13, 7 } },
                 
-    //     6,  14, 2
-    //     19, 24, 16
-    //     4,  10, 0
+        { {0, 10, 4 },
+          {16, 24, 19},
+          {2,  14, 6 } },
                 
-    //     2,  12, 3
-    //     16, 20, 17
-    //     0,  8,  1
+        { {1,  8, 0 },
+          {17, 20, 16},
+          {3,  12,  2 } },
                 
-    //     0,  8,  1
-    //     10, 23, 11
-    //     4,  9,  5
+        { {0,  8,  1 },
+          {10, 23, 11},
+          {4,  9,  5 } },
                 
-    //     6,  13, 7
-    //     14, 22, 15
-    //     2,  12, 3
+        { {6,  13, 7 },
+          {14, 22, 15},
+          {2,  12, 3 } }
+    };
+
+    // private int[][][] posMap = {
+    //     { {7,  15, 3 },
+    //       {18, 25, 17},
+    //       {5,  11, 1 } },
+                
+    //     { {6,  13, 7 },
+    //       {19, 21, 18},
+    //       {4,  9,  5 } },
+                
+    //     { {2,  14, 6 },
+    //       {16, 24, 19},
+    //       {0,  10, 4 } },
+                
+    //     { {2,  12, 3 },
+    //       {16, 20, 17},
+    //       {0,  8,  1 } },
+                
+    //     { {0,  8,  1 },
+    //       {10, 23, 11},
+    //       {4,  9,  5 } },
+                
+    //     { {6,  13, 7 },
+    //       {14, 22, 15},
+    //       {2,  12, 3 } }
     // };
+
+    private String[][] colorMap = {
+        {"g", "g", "b", "b", "g", "r", "w", "g", "o", "y", "w", "y", "o", "r", "y", "w", "r", "o", "b", "b", "o", "r", "y", "w"},
+        {"g", "b", "b", "g", "w", "r", "g", "y", "o", "g", "r", "o", "w", "w", "r", "o", "y", "y", "y", "w", "r", "o", "b", "b"},
+        {"g", "g", "b", "b", "g", "r", "y", "g", "o", "w", "y", "w", "o", "r", "w", "y", "r", "o", "b", "b", "o", "r", "w", "y"},
+        {"g", "b", "b", "g", "y", "r", "g", "w", "o", "g", "r", "o", "y", "y", "r", "o", "w", "w", "w", "y", "r", "o", "b", "b"},
+        {"g", "b", "g", "b", "y", "g", "r", "w", "g", "o", "y", "y", "r", "o", "w", "w", "r", "o", "y", "w", "b", "b", "r", "o"},
+        {"g", "b", "g", "b", "y", "g", "o", "w", "g", "r", "y", "y", "o", "r", "w", "w", "o", "r", "y", "w", "b", "b", "o", "r"},
+        
+        {"g", "b", "b", "g", "y", "r", "g", "w", "o", "g", "y", "y", "o", "r", "w", "w", "r", "o", "y", "w", "o", "r", "b", "b"}
+    };
+
+    private String[] posColor = {"r", "b", "o", "g", "y", "w"};
+    private String[] cubeFace =  {"f", "c", "i", "a", "e", "h"};
+    private Hashtable<String, Integer> cubeFaceMap = new Hashtable<>();
+
     private Hashtable<String, Integer> dirIdMap = new Hashtable<>();
     private String[] dirID = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x"};
     
@@ -141,15 +183,12 @@ public class Rubiks {
 
         this.debug("Loc    Blck   dir    mult    res   nLoc");
 
-
-
-        //position[cubePosition] = blockId;
-
         int[][] newData = new int[9][2];
         
         for (int i = 0; i < 9; i++) {
             // the position of the block to move
             int cubePos = this.moveBlocks[dirIndex][i];
+      
             // the block in that position
             int block = this.positions[cubePos];
             System.out.printf("%4s   %4s   ", cubePos, block);
@@ -157,74 +196,78 @@ public class Rubiks {
             //orientation of block to move
             String dir = this.cube[block][cubePos];
 
+            //lookup new orientation
             String mult = this.moveDir[moveIndex];
             String res = this.dirMultiply(dir, mult);
-
-
-
-            // this.debug("dir: " + this.cube[block][position]);
-            // this.debug("dir: " + this.cube[position][block]);
-
-            
-
             System.out.printf("%4s   %4s   %4s   ", dir, mult, res);
 
-            // this.debug(res);
+            //lookup new position
             int newCubePos = this.dispMap[block][this.dirIdMap.get(res)];
 
             System.out.printf("%4s%n", newCubePos);
 
+            //reset then set the block orientation
             this.cube[block][cubePos] = "";
-
             this.cube[block][newCubePos] = res;
 
+            //store updated position data so we don't overwrite
             newData[i][0] = newCubePos;
             newData[i][1] = block;
-
-            // System.out.printf("Position %s has block %s%n", position, newPos);
-            // this.debug("\n\r");
-            // this.printCube();
-            
         }
 
         for (int i = 0; i < newData.length; i++) {
             this.positions[newData[i][0]] = newData[i][1];
         }
-        
-
-
-
-
-
-
-
-        // System.out.println("FROM TO");
-        // for (int i = 0;i < this.positions.length; i++) {
-        //     System.out.printf("%2s  %2s%n", i, this.positions[i]);
-        // }
-
-        // for (int i = 0; i < 9; i++) {
-        //     int block = this.moveBlocks[dirIndex][i];
-        //     int pos = this.positions[block];
-
-        //     String dir = this.cube[block][pos];
-        //     String mult = this.moveDir[moveIndex];
-        //     String res = this.dirMultiply(dir, mult);
-
-        //     int newPos = this.dispMap[block][this.dirIdMap.get(res)];
-
-        //     this.cube[block][pos] = "";
-        //     this.cube[block][newPos] = res;
-
-        //     this.positions[block] = newPos;
-
-        //     System.out.printf("%4s   %4s   %4s   %4s   %4s   %4s%n", block, pos, newPos, dir, mult, res);
-        // }
-
-
 
         this.debug("\n\r");
         this.printCube();
+    }
+
+    public String getStateString() {
+        String ret = "";
+        for (int p = 0; p < this.positions.length; p++) {
+            ret += this.cube[p][this.positions[p]];
+        }
+        return ret;
+    }
+
+    public void showCube() {
+        for (int side = 0; side < 6; side++) {
+            String color = this.posColor[side];
+            String sideDir = this.cubeFace[side];
+
+            System.out.printf("%s  %s%n", color, sideDir);
+
+            for (int row = 0; row < 3; row++) {
+                String rowDirections = "";
+                String rowColors = "";
+
+                for (int face = 0; face < 3; face++) {
+                    //position on cube
+                    int cubePos = this.posMap[side][row][face];
+                    //block in position
+                    int block = this.positions[cubePos];
+
+                    String dir = this.cube[block][cubePos];
+
+                    String res = this.dirMultiply(sideDir, dir);
+                    String col = this.colorMap[side][this.dirIdMap.get(res)];
+
+                    boolean a = true;
+                    // || a == true
+                    // if (col != "0" || 0==1) {
+                    //     rowContents += col + "|";
+                    // } else {
+                    //     rowContents += dir + ".|";
+                    // }
+                    rowDirections += res + ".|";
+                    rowColors += col + "|";
+                    
+                }
+                System.out.println(rowDirections + "   " +  rowColors);
+            }
+            System.out.println();
+        }
     }
 
     private void initMatrix() {
@@ -234,6 +277,10 @@ public class Rubiks {
 
         for (int l = 0; l < this.moveID.length; l++) {
             this.moveIdMap.put(moveID[l], l);
+        }
+
+        for (int l = 0; l < this.cubeFace.length; l++) {
+            this.cubeFaceMap.put(moveID[l], l);
         }
     }
 

@@ -1,90 +1,45 @@
 package com.example.project;
 
+import java.io.*;
+import java.util.*;
+
 public class Cube {
 
-	public static void main(final String[] args) {
-		System.out.println("Creating cube class");
-		Rubiks r = new Rubiks(true);
+	public static void main(final String[] args) 
+	throws IOException {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-		// r.move("u");
-		// r.move("d");
-		// r.showCube();
-		r.move("b");
-		
-		r.move("r");
-	
-		r.move("f");
-	
-		r.move("f");
-	
-		r.move("r'");
-	
-		r.move("u");
-		
+		Rubiks r = new Rubiks();
 
-		r.move("b");
-	
-		// // r.move("b");
-		
+		boolean consoleArgs = false;
+		boolean exit = false;
+		int argCounter = 0;
 
-		r.move("l");
-		r.move("f");
-		r.move("b");
-		
+		if (args.length > 0) {
+			consoleArgs = true;
+		}
 
-		r.move("b");
-		r.move("r");
-		r.move("f");
+		while(exit != true) {
+			String command = "";
+			System.out.print("Cmd: ");
+			if (consoleArgs == true) {
+				command = args[argCounter];
+				System.out.println(command);
 
-		r.move("l'");
-		r.move("u'");
-		r.move("d'");
+				argCounter++;
 
-		r.move("f'");
-		r.move("b'");
-
-		r.move("r");
-		r.move("f");
-
-
-		r.move("l'");
-		r.move("u'");
-		r.move("d'");
-
-		r.move("b");
-
-		r.move("r");
-
-		r.move("f");
+				if (argCounter >= args.length) {
+					exit = true;
+				}
+			} else {
+				command = reader.readLine();
+			}
 
 
 
-
-		r.move("l'");
-		r.move("u'");
-
-		r.move("b");
-		r.move("r");
-		r.move("u");
-
-		r.move("b");
-		r.move("r");
-		r.move("u");
-
-
-		r.showCube();
-
-		
-		// r.move("f'");
-
-		// // System.out.println(r.getStateString());
-		// r.showCube();
-		
-		// r.move("l");
-
-		// r.move("f");
-
-		// r.move("r");
+			r.move(command);
+			r.showCube();
+		}
 	
 	}
 

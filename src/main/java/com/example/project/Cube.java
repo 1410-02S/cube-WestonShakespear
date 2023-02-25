@@ -36,9 +36,11 @@ public class Cube {
 				if (command.contains("q") == true) {
 					break;
 				}
+				else if (command.contains("s") == true) {
+					r.shuffle();
+					command = "u";
+				}
 			}
-
-
 
 			r.move(command);
 			r.showCube();

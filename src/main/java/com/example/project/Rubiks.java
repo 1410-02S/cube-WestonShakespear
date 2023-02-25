@@ -284,6 +284,17 @@ public class Rubiks {
         System.out.printf("%s%n%n", commands);
     }
 
+    public void shuffle() {
+        Random rand = new Random();
+        rand.setSeed(1234567890);
+
+        for (int i = 0; i < 20;i++) {
+            int moveRandom = rand.nextInt(0, 12);
+            this.move(this.moveID[moveRandom]);
+        }
+
+    }
+
     public void printCube() {
         System.out.print("    ");
         for(int x = 0; x < 26; x++) {

@@ -148,6 +148,9 @@ public class Rubiks {
     private int[] positions = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25};
 
 
+    private Hashtable<Integer, String> commandList = new Hashtable<>();
+    private int commandIndex = 0;
+
     // initializer
     public Rubiks() {
         this.initializeCube();
@@ -157,6 +160,9 @@ public class Rubiks {
 
     // public functions
     public void move(String moveDirection) {
+        this.commandList.put(commandIndex, moveDirection);
+        this.commandIndex++;
+
         int moveIndex = this.moveIdMap.get(moveDirection);
         int dirIndex = moveIndex;
         if (moveIndex > 5) {
@@ -260,6 +266,22 @@ public class Rubiks {
             }
             System.out.println();
         }
+    }
+
+    public void listCommands() {
+        String commands = "";
+        for (int i = commandIndex - 1; i >= 0; i--) {
+            String command = this.commandList.get(i);
+            int id = this.moveIdMap.get(command);
+
+            if (id <= 5) {
+                id += 6;
+            } else {
+                id -= 6;
+            }
+            commands += moveID[id];
+        }
+        System.out.printf("%s%n%n", commands);
     }
 
     public void printCube() {

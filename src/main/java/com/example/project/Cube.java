@@ -39,6 +39,7 @@ public class Cube {
 
 			r.move(command);
 			r.showCube();
+			r.listCommands();
 		}
 	
 	}
